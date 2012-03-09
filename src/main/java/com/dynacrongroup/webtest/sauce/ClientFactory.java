@@ -12,17 +12,17 @@ import org.apache.commons.httpclient.auth.AuthScope;
  *
  * Created to provide a better way to inject HTTPClient into tests, hopefully.
  */
-public class ClientFactory {
+class ClientFactory {
 
     String user;
     String key;
 
-    public ClientFactory(String user, String key) {
+    ClientFactory(String user, String key) {
         this.user = user;
         this.key = key;
     }
 
-    public HttpClient getClient() {
+    HttpClient getClient() {
 
         HttpClient client = new HttpClient();
 

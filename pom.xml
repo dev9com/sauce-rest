@@ -52,13 +52,6 @@
         <url>scm:git:git@github.com:dynacron-group/${project.artifactId}.git</url>
     </scm>
 
-    <repositories>
-        <repository>
-            <id>saucelabs-repository</id>
-            <url>https://repository-saucelabs.forge.cloudbees.com/release</url>
-        </repository>
-    </repositories>
-
     <dependencies>
 
         <!-- used by SauceREST -->

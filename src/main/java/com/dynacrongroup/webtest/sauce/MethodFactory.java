@@ -19,7 +19,7 @@ import java.io.UnsupportedEncodingException;
  * <p/>
  * Created to isolate more of the HTTPMethod logic.
  */
-public class MethodFactory {
+class MethodFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(SauceREST.class);
 
@@ -27,7 +27,7 @@ public class MethodFactory {
         throw new IllegalAccessException("Utility class should not be constructed");
     }
 
-    public static HttpMethod getMethod(String methodType, String url, String optionalJson) {
+    static HttpMethod getMethod(String methodType, String url, String optionalJson) {
 
         HttpMethod method;
 

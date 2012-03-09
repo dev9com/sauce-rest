@@ -13,15 +13,17 @@ import java.util.Map;
  * User: yurodivuie
  * Date: 2/29/12
  * Time: 11:06 AM
+ *
+ * Not sure yet if this should be public or package...
  */
 public class SauceRESTRequestBuilder {
+    public static final String REST_URL = "http://saucelabs.com/rest";
+    public static final String DEFAULT_VERSION = "v1";
 
     private static final Logger LOG = LoggerFactory.getLogger(SauceRESTRequest.class);
-    public static final String REST_URL = "http://saucelabs.com/rest";
 
     private String suffix = "";
     private String method = "GET";  //default value;
-    public static final String DEFAULT_VERSION = "v1";
     private String version = DEFAULT_VERSION;
     private Map<String, Object> jsonMap = new HashMap<String, Object>();
 
