@@ -24,8 +24,8 @@ public class StaticSauceRESTTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(StaticSauceRESTTest.class);
 
-    private String user = getValue("SAUCELABS_USER");
-    private String key = getValue("SAUCELABS_KEY");
+    private static String USER = System.getenv("SAUCELABS_USER");
+    private static String KEY = System.getenv("SAUCELABS_KEY");
 
     /**
      * This is a special bit of JUnit magic to get the name of the test
@@ -37,16 +37,16 @@ public class StaticSauceRESTTest {
     public void accountDetails() {
         LOG.info("Starting [{}]", name.getMethodName());
 
-        JSONObject accountStatus = new SauceREST(user, key).getAccountDetails();
+        JSONObject accountStatus = new SauceREST(USER, KEY).getAccountDetails();
 
-        assertThat((String)accountStatus.get("id"), equalTo(user));
+        assertThat((String)accountStatus.get("id"), equalTo(USER));
     }
 
     @Test
     public void usageData() {
         LOG.info("Starting [{}]", name.getMethodName());
 
-        JSONObject accountUsage = new SauceREST(user, key).getUsageData();
+        JSONObject accountUsage = new SauceREST(USER, KEY).getUsageData();
 
         assertThat((Map<String, Object>)accountUsage , hasKey("usage"));
     }
@@ -56,7 +56,7 @@ public class StaticSauceRESTTest {
     public void sauceStatus() {
         LOG.info("Starting [{}]", name.getMethodName());
 
-        JSONObject status = new SauceREST(user, key).getSauceStatus();
+        JSONObject status = new SauceREST(USER, KEY).getSauceStatus();
 
         LOG.info(status.toString());
     }
@@ -65,20 +65,10 @@ public class StaticSauceRESTTest {
     public void sauceBrowsers() {
         LOG.info("Starting [{}]", name.getMethodName());
 
-        JSONArray browsers = new SauceREST(user, key).getSauceBrowsers();
+        JSONArray browsers = new SauceREST(USER, KEY).getSauceBrowsers();
 
         LOG.info(browsers.toString());
 
         assertThat(browsers.toString(), containsString("firefox"));
-    }
-
-    public static String getValue(String key) {
-        String value = null;
-        if (System.getProperties().containsKey(key)) {
-            value = System.getProperty(key);
-        } else if (System.getenv().containsKey(key)) {
-            value = System.getenv(key);
-        }
-        return value;
     }
 }

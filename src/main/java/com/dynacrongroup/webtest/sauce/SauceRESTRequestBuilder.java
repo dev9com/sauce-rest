@@ -79,17 +79,20 @@ public class SauceRESTRequestBuilder {
             json = JSONValue.toJSONString(jsonMap);
         }
 
-        String stringUrl = String.format("%s/%s", REST_URL, version);
+        String stringUrl = REST_URL;
+
+        if (version != null) {
+            stringUrl += String.format("/%s", version);
+        }
 
         if (suffix != null) {
             stringUrl += suffix;
         }
 
         LOG.trace("Constructed url is {}", stringUrl);
-        URL url = null;
 
         try {
-            url = new URL(stringUrl);
+            URL url = new URL(stringUrl);
             request = new SauceRESTRequest(url, method, json);
         } catch (MalformedURLException e) {
             LOG.error("Unable to create sauce rest url {}", e);
