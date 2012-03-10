@@ -1,0 +1,27 @@
+ ------
+ Index
+ ------
+ David Drake
+ ------
+ 2012-03-09
+ ------
+
+Overview
+
+ This project is a library for use with the Sauce Labs REST api, as described
+ in the {{{https://saucelabs.com/docs/saucerest}Sauce Labs documentation}}.
+ The library uses an HttpClient with Http basic authentication to send reqeusts
+ to Sauce Labs and retrieve JSON objects as results.
+
+* Example Usage
+
++---
+    SauceREST sauceREST = new SauceREST(<SAUCELABS_USER>, <SAUCELABS_KEY>);
+    sauceREST.jobFailed(<SESSION_ID>);
+
+    JSONObject jobStatus = sauceREST.getJobStatus(<SESSION_ID>);
+    assertThat(jobStatus.get("passed"), equalTo(false));
++---
+
+ For additional samples, see usage in the parallel-webtest library and sauce-connect-plugin
+ library.

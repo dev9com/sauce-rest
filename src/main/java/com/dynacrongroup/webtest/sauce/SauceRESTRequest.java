@@ -3,6 +3,8 @@ package com.dynacrongroup.webtest.sauce;
 import java.net.URL;
 
 /**
+ * Request object used to package requests sent through SauceREST
+ *
  * User: yurodivuie
  * Date: 2/29/12
  * Time: 11:05 AM
@@ -13,6 +15,14 @@ public class SauceRESTRequest {
     public String method;
     public String jsonParameters;
 
+    /**
+     * Constructs complete object.  To build incrementally, use SauceRESTRequestBuilder.  Most
+     * requests that are possible in the API are coded as methods in SauceREST.
+     *
+     * @param url               Complete url for the RESTful request
+     * @param method            HttpMethod to use (get, post, delete, or put supported by SauceREST).
+     * @param jsonParameters    A JSON string to be used as parameters for a post or put.
+     */
     public SauceRESTRequest(URL url, String method, String jsonParameters) {
         this.requestUrl = url;
         this.method = method;

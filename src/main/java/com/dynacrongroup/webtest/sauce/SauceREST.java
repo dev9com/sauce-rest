@@ -12,23 +12,33 @@ import java.io.IOException;
 
 
 /**
- * Based on Sauce Labs code, on github: https://github.com/saucelabs/saucerest-java.
+ * Used to access the Sauce Labs rest API.
+ *
  * <p/>
- * Used to set the pass/fail status on tests.
+ * Based on Sauce Labs code, on github: https://github.com/saucelabs/saucerest-java.
  */
 public class SauceREST {
 
     protected String username;
     protected ClientFactory clientFactory;
 
-
     private static final Logger LOG = LoggerFactory.getLogger(SauceREST.class);
 
+    /**
+     * Constructs a SauceREST object with all necessary authentication information.
+     *
+     * @param username  A Sauce Labs user name.
+     * @param accessKey The Sauce Labs key corresponding to the user name.
+     */
     public SauceREST(String username, String accessKey) {
         this.username = username;
         this.clientFactory = new ClientFactory(username, accessKey);
     }
 
+    /**
+     * Returns details for a given Sauce Labs account, including minutes used.
+     * @return
+     */
     public JSONObject getAccountDetails() {
         SauceRESTRequest request = new SauceRESTRequestBuilder()
                 .setHTTPMethod("GET")
@@ -39,7 +49,12 @@ public class SauceREST {
         return (JSONObject) sendRestRequest(request);
     }
 
-
+    /**
+     * Returns detailed usage data for the Sauce Labs account, including minutes
+     * used on a daily basis.
+     *
+     * @return
+     */
     public JSONObject getUsageData() {
         SauceRESTRequest request = new SauceRESTRequestBuilder()
                 .setHTTPMethod("GET")
@@ -51,6 +66,10 @@ public class SauceREST {
         return (JSONObject) sendRestRequest(request);
     }
 
+    /**
+     * Gets a list of all jobs ever for the user, not just current jobs.
+     * @return
+     */
     public JSONArray getAllJobs() {
         SauceRESTRequest request = new SauceRESTRequestBuilder()
                 .setHTTPMethod("GET")
@@ -61,6 +80,13 @@ public class SauceREST {
         return (JSONArray) sendRestRequest(request);
     }
 
+    /**
+     * Returns status details for a given job, including pass/fail and
+     * all tags.
+     *
+     * @param jobId The session id for a Sauce job.
+     * @return
+     */
     public JSONObject getJobStatus(String jobId) {
         SauceRESTRequest request = new SauceRESTRequestBuilder()
                 .setHTTPMethod("GET")
@@ -72,14 +98,33 @@ public class SauceREST {
         return (JSONObject) sendRestRequest(request);
     }
 
+    /**
+     * Marks a job as passed; will appear as such in jobs list in Sauce Labs.
+     * @param jobId The session id for the Sauce Job that passed.
+     * @return
+     */
     public JSONObject jobPassed(String jobId) {
         return updateJob(jobId, "passed", true);
     }
 
+    /**
+     * Marks a job as failed; will appear as such in jobs list in Sauce Labs.
+     * @param jobId The session id for the Sauce Job that failed.
+     * @return
+     */
     public JSONObject jobFailed(String jobId) {
         return updateJob(jobId, "passed", false);
     }
 
+    /**
+     * Updates a job in Sauce Labs with an arbitrary JSON key/value pair.  Note that
+     * Sauce Labs will not accept arbitrary values; see documentation on their site.
+     *
+     * @param jobId     The session id for the Sauce job to update.
+     * @param jsonKey   A String key for the json object.
+     * @param jsonValue A value for the json object (discrete, a list, or a map, for instance).
+     * @return
+     */
     public JSONObject updateJob(String jobId, String jsonKey, Object jsonValue) {
         SauceRESTRequest request = new SauceRESTRequestBuilder()
                 .addJSON(jsonKey, jsonValue)
@@ -93,7 +138,7 @@ public class SauceREST {
     }
 
     /**
-     * Stop a currently running job.  Should not be necessary to use in WebDriverBase
+     * Stop a currently running job.  Should not be necessary to use in parallel-webtest.
      *
      * @param jobId
      * @return
@@ -110,6 +155,10 @@ public class SauceREST {
         return (JSONObject) sendRestRequest(request);
     }
 
+    /**
+     * Verifies that one or more tunnels exist (but does not check tunnel state).
+     * @return
+     */
     public boolean isTunnelPresent() {
         JSONArray tunnels = getAllTunnels();
         return (!tunnels.isEmpty());
@@ -147,6 +196,11 @@ public class SauceREST {
         return (JSONObject) sendRestRequest(request);
     }
 
+    /**
+     * Not currently supported by Sauce Labs, but will one day return status of Sauce Labs services.
+     *
+     * @return
+     */
     public JSONObject getSauceStatus() {
         SauceRESTRequest request = new SauceRESTRequestBuilder()
                 .setHTTPMethod("GET")
@@ -156,6 +210,10 @@ public class SauceREST {
         return (JSONObject) sendRestRequest(request);
     }
 
+    /**
+     * Gets a list of all currently supported browser/os combinations.
+     * @return
+     */
     public JSONArray getSauceBrowsers() {
         SauceRESTRequest request = new SauceRESTRequestBuilder()
                 .setHTTPMethod("GET")
@@ -165,6 +223,12 @@ public class SauceREST {
         return (JSONArray) sendRestRequest(request);
     }
 
+    /**
+     * Send a request to Sauce Labs configured using a SauceRESTRequest object.
+     *
+     * @param request   An object containing all details for the REST request.
+     * @return
+     */
     public Object sendRestRequest(SauceRESTRequest request) {
 
         Object result = null;
