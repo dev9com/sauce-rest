@@ -80,6 +80,7 @@ public class InSauceRestTest {
         JSONObject jobStatus = sauceREST.getJobStatus(getJobID());
         assertNotNull(jobStatus);
         Boolean status = (Boolean) jobStatus.get("passed");
+        log.info("Job status: {}", jobStatus.toString());
         assertThat(status, equalTo(true));
     }
 

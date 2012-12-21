@@ -7,6 +7,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.misc.BASE64Encoder;
 
 import java.io.IOException;
 
@@ -20,7 +21,7 @@ import java.io.IOException;
 public class SauceREST {
 
     protected String username;
-    protected ClientFactory clientFactory;
+    protected String accessKey;
 
     private static final Logger LOG = LoggerFactory.getLogger(SauceREST.class);
 
@@ -32,7 +33,7 @@ public class SauceREST {
      */
     public SauceREST(String username, String accessKey) {
         this.username = username;
-        this.clientFactory = new ClientFactory(username, accessKey);
+        this.accessKey = accessKey;
     }
 
     /**
@@ -232,11 +233,14 @@ public class SauceREST {
     public Object sendRestRequest(SauceRESTRequest request) {
 
         Object result = null;
-
-        HttpClient client = clientFactory.getClient();
+        HttpClient client = new HttpClient();
         HttpMethod method = MethodFactory.getMethod(request.getMethod(),
                 request.getRequestUrl().toExternalForm(),
                 request.getJsonParameters());
+        String auth = username + ":" + accessKey;
+        BASE64Encoder encoder = new BASE64Encoder();
+        auth = "Basic " + new String(encoder.encode(auth.getBytes()));
+        method.addRequestHeader("Authorization", auth);
         String response = getResponse(client, method);
 
         if (response != null) {
