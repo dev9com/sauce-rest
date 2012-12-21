@@ -1,6 +1,5 @@
 package com.dynacrongroup.webtest.sauce;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -18,18 +17,14 @@ import java.net.URL;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.hasKey;
-import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
-public class InSauceRestTest {
+public class JobStopTest {
 
     private static final Logger log = LoggerFactory
-            .getLogger(InSauceRestTest.class);
+            .getLogger(JobStopTest.class);
 
     private static String USER = System.getenv("SAUCELABS_USER");
     private static String KEY = System.getenv("SAUCELABS_KEY");
@@ -56,64 +51,14 @@ public class InSauceRestTest {
     }
 
     @Test
-    public void getAllJobs() {
-        JSONArray allJobs = sauceREST.getAllJobs();
-
-        assertNotNull(allJobs);
-
-        assertThat(allJobs.toString(), containsString(getJobID()));
-    }
-
-    @Test
-    public void getJobStatus() {
-        JSONObject jobStatus = sauceREST.getJobStatus(getJobID());
-
-        assertNotNull(jobStatus);
-        assertThat(jobStatus.toJSONString(), containsString("in progress"));
-    }
-
-
-    @Test
-    public void setJobStatusPassed() {
-        sauceREST.jobPassed(getJobID());
-
+    public void stopJob() {
+        sauceREST.stopJob(getJobID());
         JSONObject jobStatus = sauceREST.getJobStatus(getJobID());
         assertNotNull(jobStatus);
-        Boolean status = (Boolean) jobStatus.get("passed");
-        log.info("Job status: {}", jobStatus.toString());
-        assertThat(status, equalTo(true));
-    }
 
-    @Test
-    public void setJobStatusFailed() {
-        sauceREST.jobFailed(getJobID());
-
-        JSONObject jobStatus = sauceREST.getJobStatus(getJobID());
-        assertNotNull(jobStatus);
-        Boolean status = (Boolean) jobStatus.get("passed");
-        assertThat(status, equalTo(false));
-    }
-
-    @Test
-    public void sendRequestWithoutVersion() throws MalformedURLException {
-
-        SauceRESTRequest request = new SauceRESTRequestBuilder()
-                .setVersion(null)
-                .setHTTPMethod("GET")
-                .addGenericSuffix("/info/browsers")
-                .build();
-
-        assertThat(request.getRequestUrl(), equalTo(new URL("http://saucelabs.com/rest/info/browsers")));
-
-        JSONObject jobStatus = (JSONObject) sauceREST.sendRestRequest(request);
-        assertNull(jobStatus);
-    }
-
-    @Test
-    public void checkTunnelStatus() {
-        JSONArray allTunnels = sauceREST.getAllTunnels();
-        assertNotNull(allTunnels);
-        assertThat(sauceREST.isTunnelPresent(), not(equalTo(allTunnels.isEmpty())));
+        assertThat((Map<String, Object>) jobStatus, hasKey("status"));
+        String status = (String) jobStatus.get("status");
+        assertThat(status, equalToIgnoringCase("complete"));
     }
 
 
