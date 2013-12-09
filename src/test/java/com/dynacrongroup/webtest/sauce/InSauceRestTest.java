@@ -15,14 +15,9 @@ import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
-import static org.hamcrest.Matchers.hasKey;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -103,7 +98,7 @@ public class InSauceRestTest {
                 .addGenericSuffix("/info/browsers")
                 .build();
 
-        assertThat(request.getRequestUrl(), equalTo(new URL("http://saucelabs.com/rest/info/browsers")));
+        assertThat(request.getRequestUrl(), equalTo(new URL("https://saucelabs.com/rest/info/browsers")));
 
         JSONObject jobStatus = (JSONObject) sauceREST.sendRestRequest(request);
         assertNull(jobStatus);

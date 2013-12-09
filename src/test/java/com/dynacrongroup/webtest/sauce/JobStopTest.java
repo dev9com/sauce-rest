@@ -2,7 +2,7 @@ package com.dynacrongroup.webtest.sauce;
 
 import org.json.simple.JSONObject;
 import org.junit.AfterClass;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
@@ -33,8 +33,8 @@ public class JobStopTest {
     SauceREST sauceREST = new SauceREST(USER, KEY);
 
 
-    @Before
-    public void createConnection() throws Exception {
+    @BeforeClass
+    public static void createConnection() throws Exception {
 
         if (driver == null) {
 
@@ -52,8 +52,9 @@ public class JobStopTest {
 
     @Test
     public void stopJob() {
-        sauceREST.stopJob(getJobID());
-        JSONObject jobStatus = sauceREST.getJobStatus(getJobID());
+        String jobId = getJobID();
+        sauceREST.stopJob(jobId);
+        JSONObject jobStatus = sauceREST.getJobStatus(jobId);
         assertNotNull(jobStatus);
 
         assertThat((Map<String, Object>) jobStatus, hasKey("status"));
@@ -65,7 +66,12 @@ public class JobStopTest {
     @AfterClass
     public static void shutDown() {
         if (driver != null) {
-            driver.quit();
+            try {
+                driver.quit();
+            }
+            catch (Exception ex) {
+                log.info("Failed to quit browser - stopped job may prevent quitting.", ex);
+            }
             driver = null;
         }
     }
@@ -74,7 +80,7 @@ public class JobStopTest {
         return ((RemoteWebDriver) driver).getSessionId().toString();
     }
 
-    private URL getConnectionString() throws MalformedURLException {
+    private static URL getConnectionString() throws MalformedURLException {
         return new URL("http://" + USER + ":" + KEY + "@"
                 + "ondemand.saucelabs.com/wd/hub");
     }

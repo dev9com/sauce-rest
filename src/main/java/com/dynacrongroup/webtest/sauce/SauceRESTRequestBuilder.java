@@ -19,7 +19,7 @@ import java.util.Map;
  *
  */
 public class SauceRESTRequestBuilder {
-    public static final String REST_URL = "http://saucelabs.com/rest";
+    public static final String REST_URL = "https://saucelabs.com/rest";
     public static final String DEFAULT_VERSION = "v1";
 
     private static final Logger LOG = LoggerFactory.getLogger(SauceRESTRequest.class);
