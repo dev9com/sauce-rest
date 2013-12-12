@@ -1,7 +1,10 @@
 package com.dynacrongroup.webtest.sauce;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.HttpClients;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -233,15 +236,15 @@ public class SauceREST {
     public Object sendRestRequest(SauceRESTRequest request) {
 
         Object result = null;
-        HttpClient client = new HttpClient();
-        HttpMethod method = MethodFactory.getMethod(request.getMethod(),
+        HttpClient client = HttpClients.createDefault();
+        HttpUriRequest httpRequest = MethodFactory.getRequest(request.getMethod(),
                 request.getRequestUrl().toExternalForm(),
                 request.getJsonParameters());
         String auth = username + ":" + accessKey;
         BASE64Encoder encoder = new BASE64Encoder();
-        auth = "Basic " + new String(encoder.encode(auth.getBytes()));
-        method.addRequestHeader("Authorization", auth);
-        String response = getResponse(client, method);
+        auth = "Basic " + encoder.encode(auth.getBytes());
+        httpRequest.addHeader("Authorization", auth);
+        String response = getResponse(client, httpRequest);
 
         if (response != null) {
             result = JSONValue.parse(response);
@@ -250,30 +253,31 @@ public class SauceREST {
         return result;
     }
 
-    static String getResponse(HttpClient client, HttpMethod method) {
+    static String getResponse(HttpClient client, HttpUriRequest request) {
 
-        String response = null;
+        String responseMessage = null;
 
         try {
-            Integer responseCode = client.executeMethod(method);
+            HttpResponse response = client.execute(request);
+            Integer responseCode = response.getStatusLine().getStatusCode();
             if (responseCode == 200) {
-                response = method.getResponseBodyAsString();
-                if (response != null) {
+                responseMessage = IOUtils.toString(response.getEntity().getContent());
+                if (responseMessage != null) {
                     LOG.trace("Raw result: {}", response);
                 }
             }
             else {
                 LOG.error("Request [{}] failed: {} error: {}",
-                        new Object[]{method.getURI().toString(),
-                                responseCode,
-                                response});
+                        request.getURI().toString(),
+                        responseCode,
+                        response);
             }
         } catch (IOException e) {
             LOG.error("Exception while trying to execute rest request: {}\n{}",
                     new Object[]{e.getMessage(), e.getStackTrace()});
         }
 
-        return response;
+        return responseMessage;
     }
 
 }

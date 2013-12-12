@@ -1,20 +1,19 @@
 package com.dynacrongroup.webtest.sauce;
 
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.URIException;
-import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.StringEntity;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
+import java.io.IOException;
+
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 
@@ -35,81 +34,80 @@ public class MethodFactoryTest {
     private String testSite = "http://www.dynacrongroup.com/";
 
     @Test
-    public void testGet() throws URIException {
+    public void testGet() {
         LOG.info("Starting [{}]", name.getMethodName());
-        HttpMethod method = MethodFactory.getMethod("get", testSite, null);
+        HttpUriRequest request = MethodFactory.getRequest("get", testSite, null);
 
-        assertThat(method.getName(), equalToIgnoringCase("get"));
-        assertThat(method.getURI().toString(), equalToIgnoringCase(testSite));
+        assertThat(request.getMethod(), equalToIgnoringCase("get"));
+        assertThat(request.getURI().toString(), equalToIgnoringCase(testSite));
     }
 
     @Test
-    public void testPutNoParam() throws URIException {
+    public void testPutNoParam() {
         LOG.info("Starting [{}]", name.getMethodName());
-        HttpMethod method = MethodFactory.getMethod("put", testSite, null);
+        HttpUriRequest request = MethodFactory.getRequest("put", testSite, null);
 
-        assertThat(method.getName(), equalToIgnoringCase("put"));
-        assertThat(method.getURI().toString(), equalToIgnoringCase(testSite));
-        assertThat(((EntityEnclosingMethod)method).getRequestEntity(), nullValue());
+        assertThat(request.getMethod(), equalToIgnoringCase("put"));
+        assertThat(request.getURI().toString(), equalToIgnoringCase(testSite));
+        assertThat(((HttpEntityEnclosingRequestBase)request).getEntity(), nullValue());
     }
 
     @Test
-    public void testPutWithJson() throws URIException {
+    public void testPutWithJson() throws IOException {
         LOG.info("Starting [{}]", name.getMethodName());
-        HttpMethod method = MethodFactory.getMethod("put", testSite, "json");
+        HttpUriRequest request = MethodFactory.getRequest("put", testSite, "json");
 
-        assertThat(method.getName(), equalToIgnoringCase("put"));
-        assertThat(method.getURI().toString(), equalToIgnoringCase(testSite));
+        assertThat(request.getMethod(), equalToIgnoringCase("put"));
+        assertThat(request.getURI().toString(), equalToIgnoringCase(testSite));
 
-        RequestEntity entity = ((EntityEnclosingMethod) method).getRequestEntity();
+        HttpEntity entity = ((HttpEntityEnclosingRequestBase) request).getEntity();
 
 
         assertThat(entity, not(nullValue()));
-        assertThat(entity.getContentType(), containsString("application/json"));
-        assertThat(((StringRequestEntity)entity).getContent(), equalToIgnoringCase("json"));
+        assertThat(entity.getContentType().getValue(), containsString("application/json"));
+        assertThat(IOUtils.toString(((StringEntity) entity).getContent()), equalToIgnoringCase("json"));
     }
 
     @Test
-    public void testPostNoJson() throws URIException {
+    public void testPostNoJson() {
         LOG.info("Starting [{}]", name.getMethodName());
-        HttpMethod method = MethodFactory.getMethod("post", testSite, null);
+        HttpUriRequest request = MethodFactory.getRequest("post", testSite, null);
 
-        assertThat(method.getName(), equalToIgnoringCase("post"));
-        assertThat(method.getURI().toString(), equalToIgnoringCase(testSite));
-        assertThat(((EntityEnclosingMethod)method).getRequestEntity(), nullValue());
+        assertThat(request.getMethod(), equalToIgnoringCase("post"));
+        assertThat(request.getURI().toString(), equalToIgnoringCase(testSite));
+        assertThat(((HttpEntityEnclosingRequestBase)request).getEntity(), nullValue());
     }
 
     @Test
-    public void testPostWithJson() throws URIException {
+    public void testPostWithJson() throws IOException {
         LOG.info("Starting [{}]", name.getMethodName());
-        HttpMethod method = MethodFactory.getMethod("post", testSite, "json");
+        HttpUriRequest request = MethodFactory.getRequest("post", testSite, "json");
 
-        assertThat(method.getName(), equalToIgnoringCase("post"));
-        assertThat(method.getURI().toString(), equalToIgnoringCase(testSite));
+        assertThat(request.getMethod(), equalToIgnoringCase("post"));
+        assertThat(request.getURI().toString(), equalToIgnoringCase(testSite));
 
-        RequestEntity entity = ((EntityEnclosingMethod) method).getRequestEntity();
-
+        final HttpEntity entity = ((HttpEntityEnclosingRequestBase) request).getEntity();
 
         assertThat(entity, not(nullValue()));
-        assertThat(entity.getContentType(), containsString("application/json"));
-        assertThat(((StringRequestEntity)entity).getContent(), equalToIgnoringCase("json"));
+        assertThat(entity.getContentType().getValue(), containsString("application/json"));
+        assertThat(IOUtils.toString(((StringEntity) entity).getContent()), equalToIgnoringCase("json"));
     }
 
     @Test
-    public void testDelete() throws URIException {
+    public void testDelete() {
         LOG.info("Starting [{}]", name.getMethodName());
-        HttpMethod method = MethodFactory.getMethod("delete", testSite, null);
+        HttpUriRequest request = MethodFactory.getRequest("delete", testSite, null);
 
-        assertThat(method.getName(), equalToIgnoringCase("delete"));
-        assertThat(method.getURI().toString(), equalToIgnoringCase(testSite));
+        assertThat(request.getMethod(), equalToIgnoringCase("delete"));
+        assertThat(request.getURI().toString(), equalToIgnoringCase(testSite));
     }
 
 
     @Test
-    public void testInvalidMethod() throws URIException {
+    public void testInvalidMethod() {
         LOG.info("Starting [{}]", name.getMethodName());
-        HttpMethod method = MethodFactory.getMethod("garbage", testSite, null);
+        HttpUriRequest request = MethodFactory.getRequest("garbage", testSite, null);
 
-        assertThat(method, is(nullValue()));
+        assertThat(request, is(nullValue()));
     }
 }

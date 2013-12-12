@@ -1,11 +1,10 @@
 package com.dynacrongroup.webtest.sauce;
 
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.*;
+import org.apache.http.client.methods.*;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.UnsupportedEncodingException;
 
 /**
  * User: yurodivuie
@@ -22,36 +21,32 @@ class MethodFactory {
         throw new IllegalAccessException("Utility class should not be constructed");
     }
 
-    static HttpMethod getMethod(String methodType, String url, String optionalJson) {
+    static HttpUriRequest getRequest(String methodType, String url, String optionalJson) {
 
-        HttpMethod method;
+        HttpUriRequest request;
 
         if (methodType.equalsIgnoreCase("get")) {
-            method = new GetMethod(url);
+            request = new HttpGet(url);
         } else if (methodType.equalsIgnoreCase("delete")) {
-            method = new DeleteMethod(url);
+            request = new HttpDelete(url);
         } else {
 
-            EntityEnclosingMethod eMethod = null;
+            HttpEntityEnclosingRequestBase requestBase = null;
 
             if (methodType.equalsIgnoreCase("post")) {
-                eMethod = new PostMethod(url);
+                requestBase = new HttpPost(url);
             } else if (methodType.equalsIgnoreCase("put")) {
-                eMethod = new PutMethod(url);
+                requestBase = new HttpPut(url);
             }
 
-            if (optionalJson != null) {
-                try {
-                    eMethod.setRequestEntity(new StringRequestEntity(optionalJson, "application/json", "utf-8"));
-                } catch (UnsupportedEncodingException e) {
-                    LOG.error(e.getMessage());
-                }
+            if (requestBase != null && optionalJson != null) {
+                requestBase.setEntity(new StringEntity(optionalJson, ContentType.APPLICATION_JSON));
             }
 
-            method = eMethod;
+            request = requestBase;
         }
 
-        return method;
+        return request;
     }
 
 }
