@@ -3,7 +3,7 @@
 
     <groupId>com.dev9</groupId>
     <artifactId>sauce-rest</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.2</version>
     <packaging>jar</packaging>
 
     <name>Sauce Labs REST Client</name>
@@ -52,7 +52,7 @@
         <connection>scm:git:git@github.com:dev9com/${project.artifactId}.git</connection>
         <developerConnection>scm:git:git@github.com:dev9com/${project.artifactId}.git</developerConnection>
         <url>scm:git:git@github.com:dev9com/${project.artifactId}.git</url>
-      <tag>HEAD</tag>
+      <tag>sauce-rest-1.0.2</tag>
   </scm>
 
     <dependencies>
