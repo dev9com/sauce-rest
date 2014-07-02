@@ -1,4 +1,4 @@
-package com.dynacrongroup.webtest.sauce;
+package com.dev9.webtest.sauce;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
@@ -31,7 +31,7 @@ public class MethodFactoryTest {
     public TestName name = new TestName();
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodFactoryTest.class);
-    private String testSite = "http://www.dynacrongroup.com/";
+    private String testSite = "http://www.dev9.com/";
 
     @Test
     public void testGet() {

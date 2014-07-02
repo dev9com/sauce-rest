@@ -1,4 +1,4 @@
-package com.dynacrongroup.webtest.sauce;
+package com.dev9.webtest.sauce;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +23,7 @@ public class SauceRestRequestTest {
     private SauceRESTRequest sauceRESTRequest;
 
     public SauceRestRequestTest() throws Exception {
-        defaultUrl = new URL("http://www.dynacrongroup.com/");
+        defaultUrl = new URL("http://www.dev9.com/");
     }
 
     @Before

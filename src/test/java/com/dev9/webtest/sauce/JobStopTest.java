@@ -1,4 +1,4 @@
-package com.dynacrongroup.webtest.sauce;
+package com.dev9.webtest.sauce;
 
 import org.json.simple.JSONObject;
 import org.junit.AfterClass;
@@ -17,7 +17,6 @@ import java.net.URL;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.hasKey;
 import static org.junit.Assert.assertNotNull;
 
@@ -59,12 +58,14 @@ public class JobStopTest {
         long start = System.currentTimeMillis();
         boolean complete = false;
 
-        while (System.currentTimeMillis() <= start + 5000 && !complete) {
+        while (System.currentTimeMillis() <= start + 10000) {
             JSONObject jobStatus = sauceREST.getJobStatus(jobId);
             assertNotNull(jobStatus);
             assertThat((Map<String, Object>) jobStatus, hasKey("status"));
             status = (String) jobStatus.get("status");
             complete = "complete".equalsIgnoreCase(status);
+
+            if (complete) break;
         }
 
         if (!complete) throw new AssertionError("Expected 'complete' but was: '" + status + "'");
