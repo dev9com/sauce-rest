@@ -54,12 +54,20 @@ public class JobStopTest {
     public void stopJob() {
         String jobId = getJobID();
         sauceREST.stopJob(jobId);
-        JSONObject jobStatus = sauceREST.getJobStatus(jobId);
-        assertNotNull(jobStatus);
+        String status = "";
 
-        assertThat((Map<String, Object>) jobStatus, hasKey("status"));
-        String status = (String) jobStatus.get("status");
-        assertThat(status, equalToIgnoringCase("complete"));
+        long start = System.currentTimeMillis();
+        boolean complete = false;
+
+        while (System.currentTimeMillis() <= start + 5000 && !complete) {
+            JSONObject jobStatus = sauceREST.getJobStatus(jobId);
+            assertNotNull(jobStatus);
+            assertThat((Map<String, Object>) jobStatus, hasKey("status"));
+            status = (String) jobStatus.get("status");
+            complete = "complete".equalsIgnoreCase(status);
+        }
+
+        if (!complete) throw new AssertionError("Expected 'complete' but was: '" + status + "'");
     }
 
 
